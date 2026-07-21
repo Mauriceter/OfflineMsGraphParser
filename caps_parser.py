@@ -555,6 +555,8 @@ class CAPolicy:
 
         self.platforms = []
         self.platforms_exclude = []
+        self.devices_include = []
+        self.devices_exclude = []
         self.client_types = []
 
         self.controls = []
@@ -672,11 +674,13 @@ def _extract_conditions(cond, resolver, policy):
         resolver,
         "application"
     )
+    policy.apps_include += _extract(apps.get("Include", []), "ApplicationFilterRule")
 
     policy.apps_exclude = resolve_list(
         _extract(apps.get("Exclude", []), "Applications"),
         resolver, "application"
     )
+    policy.apps_exclude += _extract(apps.get("Exclude", []), "ApplicationFilterRule")
 
     # -----------------------------
     # Locations
@@ -734,6 +738,25 @@ def _extract_conditions(cond, resolver, policy):
             "DevicePlatforms"
         )
     ]
+
+    # -----------------------------
+    # Devices
+    # -----------------------------
+
+    devices = cond.get(
+        "Devices",
+        {}
+    )
+
+    policy.devices_include = resolve_list(
+        _extract(devices.get("Include", []), "DeviceRule"),
+        resolver,
+    )
+
+    policy.devices_exclude = resolve_list(
+        _extract(devices.get("Exclude", []), "DeviceRule"),
+        resolver,
+    )
 
     # -----------------------------
     # Client Types
@@ -1522,6 +1545,36 @@ None
 
 </div>
 
+
+
+
+
+<div class="section">
+
+<h3>
+Devices
+</h3>
+
+{% if not p.devices_include and not p.devices_exclude %}
+<div class="empty">
+None
+</div>
+{% endif %}
+
+{% for x in p.devices_include %}
+<div class="item included">
+✓ {{x}}
+</div>
+{% endfor %}
+
+{% for x in p.devices_exclude %}
+<div class="item excluded">
+✕ {{x}}
+</div>
+{% endfor %}
+
+
+</div>
 
 
 
