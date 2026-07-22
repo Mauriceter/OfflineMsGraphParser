@@ -108,3 +108,18 @@ options:
 
 Output is a table with:
 `Principal | AppId | Resource | Role | Description`
+
+
+## bh2roadrecon.py
+
+Use Bloodhound data and raw policies output from AAD graph to generate an SQLite db used by roadrecon. Currently only import all needed info for the policies plugin.
+
+Need at least groups, apps, servicePrincipals, users, role assignements and role definitions bloodhound objects.
+To use with [CAPSLock](https://github.com/rbnroot/CAPSlock), you also need group membership of the targeted user (result of memberof2bh.py for example) 
+
+policy.json is the raw output of `https://graph.windows.net/example.com/policies?api-version=1.61-internal`
+
+```
+Usage:
+python bh2roadrecon.py <bloodhound_file_or_directory> <policy.json>
+```
